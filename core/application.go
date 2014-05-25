@@ -13,6 +13,7 @@ type Application struct {
 	postHandlers     []Handler
 	notFoundHandlers []Handler
 	Logger           *log.Logger
+	*dataContainer
 }
 
 // Pre adds pre handlers to the application.
@@ -90,6 +91,9 @@ func NewApplication() *Application {
 	return &Application{
 		notFoundHandlers: []Handler{notFound},
 		Logger:           log.New(os.Stdout, loggerPrefix, 0),
+		dataContainer: &dataContainer{
+			data: map[interface{}]interface{}{},
+		},
 	}
 }
 
