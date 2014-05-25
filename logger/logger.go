@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-galaxy/core"
+	"github.com/yosssi/galaxy/core"
 )
 
 // Logger returns a handler for logging.

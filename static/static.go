@@ -5,7 +5,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/go-galaxy/core"
+	"github.com/yosssi/galaxy/core"
 )
 
 // Static returns a handler for serving static files.
