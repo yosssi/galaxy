@@ -20,7 +20,7 @@ func Static(directory string) core.Handler {
 		f, err := dir.Open(file)
 
 		if err != nil {
-			return err
+			return ctx.Next()
 		}
 
 		defer f.Close()
@@ -28,7 +28,7 @@ func Static(directory string) core.Handler {
 		fi, err := f.Stat()
 
 		if err != nil {
-			return err
+			return ctx.Next()
 		}
 
 		if fi.IsDir() {
@@ -42,7 +42,7 @@ func Static(directory string) core.Handler {
 			f, err = dir.Open(file)
 
 			if err != nil {
-				return err
+				return ctx.Next()
 			}
 
 			defer f.Close()
@@ -50,7 +50,7 @@ func Static(directory string) core.Handler {
 			fi, err = f.Stat()
 
 			if err != nil || fi.IsDir() {
-				return err
+				return ctx.Next()
 			}
 		}
 
@@ -77,7 +77,7 @@ func StaticBin(dir string, asset func(string) ([]byte, error)) core.Handler {
 
 			if err != nil {
 				// Exit if the asset could not be found.
-				return nil
+				return ctx.Next()
 			}
 		}
 
