@@ -1,9 +1,11 @@
 package static
 
 import (
+	"bytes"
 	"net/http"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/yosssi/galaxy/core"
 )
@@ -11,10 +13,6 @@ import (
 // Static returns a handler for serving static files.
 func Static(directory string) core.Handler {
 	return func(ctx *core.Context) error {
-		if ctx.Req.Method != core.MethodGET && ctx.Req.Method != core.MethodHEAD {
-			return nil
-		}
-
 		file := ctx.Req.URL.Path
 
 		dir := http.Dir(directory)
@@ -59,6 +57,33 @@ func Static(directory string) core.Handler {
 		ctx.App.Logger.Println("[Static] Serving " + file)
 
 		http.ServeContent(ctx.Res, ctx.Req, file, fi.ModTime(), f)
+
+		return ctx.Next()
+	}
+}
+
+// StaticBin returns a handler for serving static files from binaray data.
+func StaticBin(dir string, asset func(string) ([]byte, error)) core.Handler {
+	modtime := time.Now()
+
+	return func(ctx *core.Context) error {
+		url := ctx.Req.URL.Path
+
+		b, err := asset(dir + url)
+
+		if err != nil {
+			// Try to serve the index file.
+			b, err = asset(path.Join(dir+url, indexFile))
+
+			if err != nil {
+				// Exit if the asset could not be found.
+				return nil
+			}
+		}
+
+		ctx.App.Logger.Println("[Static] Serving " + url)
+
+		http.ServeContent(ctx.Res, ctx.Req, url, modtime, bytes.NewReader(b))
 
 		return ctx.Next()
 	}
