@@ -31,7 +31,7 @@ func main() {
 
 * Simple to use
 * Inspired by Martini but does not reply on Dependency Injection
-* Modular design - Every package has a single function. You can construct your own framework by choosing packages as you like.
+* Modular design - Every package has a single function. You can construct your own framework by choosing and importing packages as you like.
 * Handler based framework - You can define the flow of the framework processes by stacking handlers.
 
 ## Basics
