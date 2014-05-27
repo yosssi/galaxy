@@ -1,4 +1,3 @@
-galaxy
-======
+# Galaxy - Simple web framework for Go
 
-Simple web framework for Go
+
