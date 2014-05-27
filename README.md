@@ -21,7 +21,7 @@ func main() {
 	app := core.NewApplication()
 	app.GET("/", func(ctx *core.Context) error {
 		fmt.Fprintf(ctx.Res, "Hello world!")
-		return nil
+		return ctx.Next()
 	})
 	app.Run(":3000")
 }
@@ -38,41 +38,41 @@ func main() {
 
 ### Handler
 
-A handler is a function whose type is `[core.Handler](https://godoc.org/github.com/yosssi/galaxy/core#Handler)`. This is the small unit of the processing flow.
+A handler is a function whose type is [core.Handler](https://godoc.org/github.com/yosssi/galaxy/core#Handler). This is the small unit of the processing flow.
 
 ### Context
 
-A context is a request context whose type is `[core.Context](https://godoc.org/github.com/yosssi/galaxy/core#Context)`. It is generated in every request. It is passed to every handlers. A request (and application) context data is passed to every handlers via this struct.
+A context is a request context whose type is [core.Context](https://godoc.org/github.com/yosssi/galaxy/core#Context). It is generated in every request. It is passed to every handlers. A request (and application) context data is passed to every handlers via this struct.
 
 ## Routing
 
 ```go
 app.GET("/", func(ctx *core.Context) error {
-	return nil
+	return ctx.Next()
 })
 
 app.PATCH("/", func(ctx *core.Context) error {
-	return nil
+	return ctx.Next()
 })
 
 app.POST("/", func(ctx *core.Context) error {
-	return nil
+	return ctx.Next()
 })
 
 app.PUT("/", func(ctx *core.Context) error {
-	return nil
+	return ctx.Next()
 })
 
 app.DELETE("/", func(ctx *core.Context) error {
-	return nil
+	return ctx.Next()
 })
 
 app.HEAD("/", func(ctx *core.Context) error {
-	return nil
+	return ctx.Next()
 })
 
 app.OPTIONS("/", func(ctx *core.Context) error {
-	return nil
+	return ctx.Next()
 })
 ```
 
@@ -87,7 +87,69 @@ app.GET(
 	},
 	func(ctx *core.Context) error {
 		fmt.Println("handler #2")
-		return nil
+		return ctx.Next()
 	},
 )
 ```
+
+## Pre & post handlers
+
+You can define pre & post handlers which are invoked pre / post route handlers. These handlers are invoke in any request.
+
+```go
+app.Pre(func(ctx *core.Context) error {
+	fmt.Println("pre handler")
+	return ctx.Next()
+})
+
+app.GET("/", func(ctx *core.Context) error {
+	fmt.Println("route handler")
+	return ctx.Next()
+})
+
+app.Post(func(ctx *core.Context) error {
+	fmt.Println("post handler")
+	return ctx.Next()
+})
+```
+
+## Provide the application / requext context data to every handler
+
+You can provide the application / requext context data to every handler.
+
+```go
+app := core.NewApplication()
+
+// Set the data to the application context.
+if err := app.SetData("text1", "this is an application context data"); err != nil {
+	panic(err)
+}
+
+app.Pre(func(ctx *core.Context) error {
+	// Get the data from the application context.
+	v, ok := app.GetData("text1")
+
+	if ok {
+		fmt.Println(v.(string))
+	}
+
+	// Set the data to the request context.
+	if err := ctx.SetData("text1", "this is a request context data"); err != nil {
+		return err
+	}
+
+	return ctx.Next()
+})
+
+app.Pre(func(ctx *core.Context) error {
+	// Get the data from the request context.
+	v, ok := ctx.GetData("text1")
+
+	if ok {
+		fmt.Println(v.(string))
+	}
+
+	return ctx.Next()
+})
+```
+
