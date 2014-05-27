@@ -2,7 +2,7 @@
 
 [![GoDoc](https://godoc.org/github.com/yosssi/galaxy?status.png)](https://godoc.org/github.com/yosssi/galaxy)
 
-Galaxy is a simple web framework for Go. Galaxy is inspired by [Maritini](https://github.com/go-martini/martini) but does not rely on Dependency Injection at all. Go web applications can be built in a succinct manner by using Galaxy.
+Galaxy is a simple web framework for Go. This is inspired by [Maritini](https://github.com/go-martini/martini) but this does not rely on Dependency Injection at all. Go web applications can be built in a succinct manner by using Galaxy.
 
 ## Getting Started
 
@@ -38,7 +38,7 @@ func main() {
 
 ### Handler
 
-A handler is a function whose type is [core.Handler](https://godoc.org/github.com/yosssi/galaxy/core#Handler). This is the small unit of the processing flow.
+A handler is a function whose type is [core.Handler](https://godoc.org/github.com/yosssi/galaxy/core#Handler). This is the smallest unit of the processing flow.
 
 ### Context
 
