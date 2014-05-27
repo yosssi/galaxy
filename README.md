@@ -153,3 +153,42 @@ app.Pre(func(ctx *core.Context) error {
 })
 ```
 
+## Packages
+
+* [core](https://godoc.org/github.com/yosssi/galaxy/core) - core functions of Galaxy web framework
+* [logger](https://godoc.org/github.com/yosssi/galaxy/logger) - handler for logging
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/yosssi/galaxy/core"
+	"github.com/yosssi/galaxy/logger"
+)
+
+func main() {
+	app := core.NewApplication()
+	app.Pre(logger.Logger())
+	app.GET("/", func(ctx *core.Context) error {
+		fmt.Fprintf(ctx.Res, "Hello world")
+		return ctx.Next()
+	})
+	app.Run(":3000")
+}
+```
+* [static](https://godoc.org/github.com/yosssi/galaxy/static) - handler for serving static files
+```go
+package main
+
+import (
+	"github.com/yosssi/galaxy/core"
+	"github.com/yosssi/galaxy/static"
+)
+
+func main() {
+	app := core.NewApplication()
+	app.Pre(static.Static("public"))
+	app.Run(":3000")
+}
+```
