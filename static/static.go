@@ -10,9 +10,9 @@ import (
 
 // Static returns a handler for serving static files.
 func Static(directory string) core.Handler {
-	return func(ctx *core.Context) {
+	return func(ctx *core.Context) error {
 		if ctx.Req.Method != core.MethodGET && ctx.Req.Method != core.MethodHEAD {
-			return
+			return nil
 		}
 
 		file := ctx.Req.URL.Path
@@ -22,8 +22,7 @@ func Static(directory string) core.Handler {
 		f, err := dir.Open(file)
 
 		if err != nil {
-			ctx.Next()
-			return
+			return err
 		}
 
 		defer f.Close()
@@ -31,15 +30,13 @@ func Static(directory string) core.Handler {
 		fi, err := f.Stat()
 
 		if err != nil {
-			ctx.Next()
-			return
+			return err
 		}
 
 		if fi.IsDir() {
 			if !strings.HasSuffix(ctx.Req.URL.Path, "/") {
 				http.Redirect(ctx.Res, ctx.Req, ctx.Req.URL.Path+"/", http.StatusFound)
-				ctx.Next()
-				return
+				return ctx.Next()
 			}
 
 			file = path.Join(file, indexFile)
@@ -47,8 +44,7 @@ func Static(directory string) core.Handler {
 			f, err = dir.Open(file)
 
 			if err != nil {
-				ctx.Next()
-				return
+				return err
 			}
 
 			defer f.Close()
@@ -56,8 +52,7 @@ func Static(directory string) core.Handler {
 			fi, err = f.Stat()
 
 			if err != nil || fi.IsDir() {
-				ctx.Next()
-				return
+				return err
 			}
 		}
 
@@ -65,6 +60,6 @@ func Static(directory string) core.Handler {
 
 		http.ServeContent(ctx.Res, ctx.Req, file, fi.ModTime(), f)
 
-		ctx.Next()
+		return ctx.Next()
 	}
 }

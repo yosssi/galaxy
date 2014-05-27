@@ -2,7 +2,6 @@ package core
 
 // constant definitions
 const (
-	loggerPrefix  = "[Galaxy]"
 	MethodGET     = "GET"
 	MethodPATCH   = "PATCH"
 	MethodPOST    = "POST"
@@ -11,4 +10,5 @@ const (
 	MethodOPTIONS = "OPTIONS"
 	MethodHEAD    = "HEAD"
 	MethodANY     = "*"
+	loggerPrefix  = "[Galaxy]"
 )

@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 // Application represents an application.
@@ -13,6 +14,7 @@ type Application struct {
 	postHandlers     []Handler
 	notFoundHandlers []Handler
 	Logger           *log.Logger
+	errorHandler     ErrorHandler
 	*dataContainer
 }
 
@@ -32,12 +34,14 @@ func (app *Application) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 
 	ctx := newContext(app, res, req)
 
-	ctx.handle()
+	if err := ctx.handle(); err != nil {
+		app.errorHandler(ctx, err)
+	}
 }
 
 // Run runs an HTTP server.
 func (app *Application) Run(addr string) {
-	app.Logger.Printf("listening on %s", addr)
+	app.Logger.Printf(" Listening on %s", addr)
 	app.Logger.Fatal(http.ListenAndServe(addr, app))
 }
 
@@ -86,6 +90,11 @@ func (app *Application) NotFound(handlers ...Handler) {
 	app.notFoundHandlers = handlers
 }
 
+// SetErrorHandler sets the handler to the application.
+func (app *Application) SetErrorHandler(handler ErrorHandler) {
+	app.errorHandler = handler
+}
+
 // NewApplication generates an application and returns it.
 func NewApplication() *Application {
 	return &Application{
@@ -94,19 +103,31 @@ func NewApplication() *Application {
 		dataContainer: &dataContainer{
 			data: map[interface{}]interface{}{},
 		},
+		errorHandler: errorHandler,
 	}
 }
 
 // notFoundCheck provides a handler which checkes if not found handlers should be invoked or not.
-func notFoundCheck(ctx *Context) {
+func notFoundCheck(ctx *Context) error {
 	if ctx.Res.Status() != 0 {
-		return
+		return nil
 	}
 
-	ctx.Next()
+	return ctx.Next()
 }
 
 // notFound provides a default not found handler.
-func notFound(ctx *Context) {
+func notFound(ctx *Context) error {
 	http.NotFound(ctx.Res, ctx.Req)
+
+	return nil
+}
+
+// errorHandler provides a default error handler.
+func errorHandler(ctx *Context, err error) {
+	ctx.App.Logger.Printf("[ErrorHandler] An error occurred: %+v", err)
+
+	if ctx.Res.Status() == 0 {
+		http.Error(ctx.Res, strconv.Itoa(http.StatusInternalServerError)+" "+http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+	}
 }

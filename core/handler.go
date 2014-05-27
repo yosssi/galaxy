@@ -1,4 +1,4 @@
 package core
 
 // Handler represents a handler.
-type Handler func(ctx *Context)
+type Handler func(ctx *Context) error

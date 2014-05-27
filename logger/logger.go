@@ -9,24 +9,34 @@ import (
 
 // Logger returns a handler for logging.
 func Logger() core.Handler {
-	return func(ctx *core.Context) {
-		start := time.Now()
-
+	return func(ctx *core.Context) error {
 		ctx.App.Logger.Printf(
-			"Started %s %s for %s",
+			"[Logger] Started %s %s for %s",
 			ctx.Req.Method,
 			ctx.Req.URL.Path,
 			extractAddr(ctx.Req),
 		)
 
-		ctx.Next()
+		err := ctx.Next()
+
+		if err != nil {
+			ctx.App.Logger.Printf(
+				"[Logger] Error (%+v) in %v\n",
+				err,
+				time.Since(ctx.StartTime()),
+			)
+
+			return err
+		}
 
 		ctx.App.Logger.Printf(
-			"Completed %d %s in %v\n",
+			"[Logger] Completed %d %s in %v\n",
 			ctx.Res.Status(),
 			http.StatusText(ctx.Res.Status()),
-			time.Since(start),
+			time.Since(ctx.StartTime()),
 		)
+
+		return nil
 	}
 }
 

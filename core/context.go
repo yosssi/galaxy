@@ -1,6 +1,9 @@
 package core
 
-import "net/http"
+import (
+	"net/http"
+	"time"
+)
 
 // Context represents a request context.
 type Context struct {
@@ -10,16 +13,22 @@ type Context struct {
 	Params       map[string]string
 	handlers     []Handler
 	handlerIndex int
+	startTime    time.Time
 	*dataContainer
 }
 
 // Next invokes the next handler.
-func (ctx *Context) Next() {
+func (ctx *Context) Next() error {
 	if len(ctx.handlers) <= ctx.handlerIndex+1 {
-		return
+		return nil
 	}
 	ctx.handlerIndex++
-	ctx.handle()
+	return ctx.handle()
+}
+
+// StartTime returns the context's start time.
+func (ctx *Context) StartTime() time.Time {
+	return ctx.startTime
 }
 
 // setHandlers sets handlers to the context.
@@ -47,12 +56,12 @@ func (ctx *Context) appendRouteHandlers() {
 }
 
 // handle invokes the context's handler.
-func (ctx *Context) handle() {
+func (ctx *Context) handle() error {
 	if len(ctx.handlers) <= ctx.handlerIndex {
-		return
+		return nil
 	}
 
-	ctx.handlers[ctx.handlerIndex](ctx)
+	return ctx.handlers[ctx.handlerIndex](ctx)
 }
 
 // newContext generates a context and returns it.
@@ -64,6 +73,7 @@ func newContext(app *Application, res ResponseWriter, req *http.Request) *Contex
 		dataContainer: &dataContainer{
 			data: map[interface{}]interface{}{},
 		},
+		startTime: time.Now(),
 	}
 
 	ctx.setHandlers()
