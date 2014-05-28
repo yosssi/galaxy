@@ -19,7 +19,7 @@ import (
 
 func main() {
 	app := core.NewApplication()
-	app.GET("/", func(ctx *core.Context) error {
+	app.Get("/", func(ctx *core.Context) error {
 		fmt.Fprintf(ctx.Res, "Hello world!")
 		return ctx.Next()
 	})
@@ -47,31 +47,31 @@ A context is a request context whose type is [core.Context](https://godoc.org/gi
 ## Routing
 
 ```go
-app.GET("/", func(ctx *core.Context) error {
+app.Get("/", func(ctx *core.Context) error {
 	return ctx.Next()
 })
 
-app.PATCH("/", func(ctx *core.Context) error {
+app.Patch("/", func(ctx *core.Context) error {
 	return ctx.Next()
 })
 
-app.POST("/", func(ctx *core.Context) error {
+app.Post("/", func(ctx *core.Context) error {
 	return ctx.Next()
 })
 
-app.PUT("/", func(ctx *core.Context) error {
+app.Put("/", func(ctx *core.Context) error {
 	return ctx.Next()
 })
 
-app.DELETE("/", func(ctx *core.Context) error {
+app.Delete("/", func(ctx *core.Context) error {
 	return ctx.Next()
 })
 
-app.HEAD("/", func(ctx *core.Context) error {
+app.Head("/", func(ctx *core.Context) error {
 	return ctx.Next()
 })
 
-app.OPTIONS("/", func(ctx *core.Context) error {
+app.Options("/", func(ctx *core.Context) error {
 	return ctx.Next()
 })
 ```
@@ -79,7 +79,7 @@ app.OPTIONS("/", func(ctx *core.Context) error {
 Route handlers can be stacked.
 
 ```go
-app.GET(
+app.Get(
 	"/",
 	func(ctx *core.Context) error {
 		fmt.Println("handler #1")
@@ -94,20 +94,20 @@ app.GET(
 
 ## Pre & post handlers
 
-You can define pre & post handlers which are invoked pre / post route handlers. These handlers are invoke in any request.
+You can define pre & post handlers which are invoked before / after route handlers. These handlers are invoke in any request.
 
 ```go
-app.Pre(func(ctx *core.Context) error {
+app.UsePre(func(ctx *core.Context) error {
 	fmt.Println("pre handler")
 	return ctx.Next()
 })
 
-app.GET("/", func(ctx *core.Context) error {
+app.Get("/", func(ctx *core.Context) error {
 	fmt.Println("route handler")
 	return ctx.Next()
 })
 
-app.Post(func(ctx *core.Context) error {
+app.UsePost(func(ctx *core.Context) error {
 	fmt.Println("post handler")
 	return ctx.Next()
 })
@@ -125,7 +125,7 @@ if err := app.SetData("text1", "this is an application context data"); err != ni
 	panic(err)
 }
 
-app.Pre(func(ctx *core.Context) error {
+app.UsePre(func(ctx *core.Context) error {
 	// Get the data from the application context.
 	v, ok := app.GetData("text1")
 
@@ -141,7 +141,7 @@ app.Pre(func(ctx *core.Context) error {
 	return ctx.Next()
 })
 
-app.Pre(func(ctx *core.Context) error {
+app.UsePre(func(ctx *core.Context) error {
 	// Get the data from the request context.
 	v, ok := ctx.GetData("text1")
 
@@ -169,8 +169,8 @@ import (
 
 func main() {
 	app := core.NewApplication()
-	app.Pre(logger.Logger())
-	app.GET("/", func(ctx *core.Context) error {
+	app.UsePre(logger.Logger())
+	app.Get("/", func(ctx *core.Context) error {
 		fmt.Fprintf(ctx.Res, "Hello world")
 		return ctx.Next()
 	})
@@ -188,7 +188,7 @@ import (
 
 func main() {
 	app := core.NewApplication()
-	app.Pre(static.Static("public"))
+	app.UsePre(static.Static("public"))
 	app.Run(":3000")
 }
 ```

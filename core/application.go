@@ -18,13 +18,13 @@ type Application struct {
 	*dataContainer
 }
 
-// Pre adds pre handlers to the application.
-func (app *Application) Pre(handlers ...Handler) {
+// UsePre adds pre handlers to the application.
+func (app *Application) UsePre(handlers ...Handler) {
 	app.preHandlers = append(app.preHandlers, handlers...)
 }
 
-// Post adds post handlers to the application.
-func (app *Application) Post(handlers ...Handler) {
+// UsePost adds post handlers to the application.
+func (app *Application) UsePost(handlers ...Handler) {
 	app.postHandlers = append(app.postHandlers, handlers...)
 }
 
@@ -45,43 +45,43 @@ func (app *Application) Run(addr string) {
 	app.Logger.Fatal(http.ListenAndServe(addr, app))
 }
 
-// GET adds a route with GET method.
-func (app *Application) GET(pattern string, handlers ...Handler) {
+// Get adds a route with GET method.
+func (app *Application) Get(pattern string, handlers ...Handler) {
 	app.routes = append(app.routes, newRoute(MethodGET, pattern, handlers))
 }
 
-// PATCH adds a route with PATCH method.
-func (app *Application) PATCH(pattern string, handlers ...Handler) {
+// Patch adds a route with PATCH method.
+func (app *Application) Patch(pattern string, handlers ...Handler) {
 	app.routes = append(app.routes, newRoute(MethodPATCH, pattern, handlers))
 }
 
-// POST adds a route with POST method.
-func (app *Application) POST(pattern string, handlers ...Handler) {
+// Post adds a route with POST method.
+func (app *Application) Post(pattern string, handlers ...Handler) {
 	app.routes = append(app.routes, newRoute(MethodPOST, pattern, handlers))
 }
 
-// PUT adds a route with PUT method.
-func (app *Application) PUT(pattern string, handlers ...Handler) {
+// Put adds a route with PUT method.
+func (app *Application) Put(pattern string, handlers ...Handler) {
 	app.routes = append(app.routes, newRoute(MethodPUT, pattern, handlers))
 }
 
-// DELETE adds a route with DELETE method.
-func (app *Application) DELETE(pattern string, handlers ...Handler) {
+// Delete adds a route with DELETE method.
+func (app *Application) Delete(pattern string, handlers ...Handler) {
 	app.routes = append(app.routes, newRoute(MethodDELETE, pattern, handlers))
 }
 
-// OPTIONS adds a route with OPTIONS method.
-func (app *Application) OPTIONS(pattern string, handlers ...Handler) {
+// Options adds a route with OPTIONS method.
+func (app *Application) Options(pattern string, handlers ...Handler) {
 	app.routes = append(app.routes, newRoute(MethodOPTIONS, pattern, handlers))
 }
 
-// HEAD adds a route with HEAD method.
-func (app *Application) HEAD(pattern string, handlers ...Handler) {
+// Head adds a route with HEAD method.
+func (app *Application) Head(pattern string, handlers ...Handler) {
 	app.routes = append(app.routes, newRoute(MethodHEAD, pattern, handlers))
 }
 
-// ANY adds a route goes with any methods.
-func (app *Application) ANY(pattern string, handlers ...Handler) {
+// Any adds a route goes with any methods.
+func (app *Application) Any(pattern string, handlers ...Handler) {
 	app.routes = append(app.routes, newRoute(MethodANY, pattern, handlers))
 }
 
