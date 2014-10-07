@@ -1,6 +1,6 @@
 # Galaxy - Simple web framework for Go
 
-[![GoDoc](https://godoc.org/github.com/yosssi/galaxy?status.png)](https://godoc.org/github.com/yosssi/galaxy)
+[![GoDoc](http://godoc.org/github.com/yosssi/galaxy?status.png)](http://godoc.org/github.com/yosssi/galaxy)
 
 Galaxy is a simple web framework for Go. This is inspired by [Maritini](https://github.com/go-martini/martini) but this does not rely on Dependency Injection at all. Go web applications can be built in a succinct manner by using Galaxy.
 
